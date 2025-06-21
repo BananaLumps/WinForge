@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36121.58
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Base", "WinForge.Base\WinForge.Base.csproj", "{A45B36B9-ADC1-4034-B7EC-60F609147FA9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Common", "WinForge.Common\WinForge.Common.csproj", "{C62E8D91-170C-4126-AB16-EBF945A7FE77}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A45B36B9-ADC1-4034-B7EC-60F609147FA9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A45B36B9-ADC1-4034-B7EC-60F609147FA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A45B36B9-ADC1-4034-B7EC-60F609147FA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A45B36B9-ADC1-4034-B7EC-60F609147FA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C62E8D91-170C-4126-AB16-EBF945A7FE77}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C62E8D91-170C-4126-AB16-EBF945A7FE77}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C62E8D91-170C-4126-AB16-EBF945A7FE77}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C62E8D91-170C-4126-AB16-EBF945A7FE77}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0DADFB5-4685-4456-8E42-21574C0A5912}
+	EndGlobalSection
+EndGlobal

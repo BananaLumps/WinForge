@@ -1,0 +1,30 @@
+### YamlMime:ManagedReference
+items:
+- uid: WinForge.Settings
+  commentId: N:WinForge.Settings
+  id: WinForge.Settings
+  children:
+  - WinForge.Settings.Application
+  - WinForge.Settings.Persistence
+  langs:
+  - csharp
+  - vb
+  name: WinForge.Settings
+  nameWithType: WinForge.Settings
+  fullName: WinForge.Settings
+  type: Namespace
+  assemblies:
+  - WinForge.Common
+references:
+- uid: WinForge.Settings.Application
+  commentId: T:WinForge.Settings.Application
+  href: WinForge.Settings.Application.html
+  name: Application
+  nameWithType: Application
+  fullName: WinForge.Settings.Application
+- uid: WinForge.Settings.Persistence
+  commentId: T:WinForge.Settings.Persistence
+  href: WinForge.Settings.Persistence.html
+  name: Persistence
+  nameWithType: Persistence
+  fullName: WinForge.Settings.Persistence

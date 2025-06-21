@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: WinForge
+  commentId: N:WinForge
+  id: WinForge
+  children:
+  - WinForge.IModule
+  langs:
+  - csharp
+  - vb
+  name: WinForge
+  nameWithType: WinForge
+  fullName: WinForge
+  type: Namespace
+  assemblies:
+  - WinForge.Common
+references:
+- uid: WinForge.IModule
+  commentId: T:WinForge.IModule
+  href: WinForge.IModule.html
+  name: IModule
+  nameWithType: IModule
+  fullName: WinForge.IModule

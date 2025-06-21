@@ -1,0 +1,185 @@
+### YamlMime:ManagedReference
+items:
+- uid: WinForge.IModule
+  commentId: T:WinForge.IModule
+  id: IModule
+  parent: WinForge
+  children:
+  - WinForge.IModule.Initialize
+  - WinForge.IModule.Name
+  - WinForge.IModule.Status
+  - WinForge.IModule.Version
+  langs:
+  - csharp
+  - vb
+  name: IModule
+  nameWithType: IModule
+  fullName: WinForge.IModule
+  type: Interface
+  source:
+    id: IModule
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IModule.cs
+    startLine: 2
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge
+  syntax:
+    content: public interface IModule
+    content.vb: Public Interface IModule
+- uid: WinForge.IModule.Name
+  commentId: P:WinForge.IModule.Name
+  id: Name
+  parent: WinForge.IModule
+  langs:
+  - csharp
+  - vb
+  name: Name
+  nameWithType: IModule.Name
+  fullName: WinForge.IModule.Name
+  type: Property
+  source:
+    id: Name
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IModule.cs
+    startLine: 4
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge
+  syntax:
+    content: string Name { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Name As String
+  overload: WinForge.IModule.Name*
+- uid: WinForge.IModule.Version
+  commentId: P:WinForge.IModule.Version
+  id: Version
+  parent: WinForge.IModule
+  langs:
+  - csharp
+  - vb
+  name: Version
+  nameWithType: IModule.Version
+  fullName: WinForge.IModule.Version
+  type: Property
+  source:
+    id: Version
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IModule.cs
+    startLine: 5
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge
+  syntax:
+    content: string Version { get; }
+    parameters: []
+    return:
+      type: System.String
+    content.vb: ReadOnly Property Version As String
+  overload: WinForge.IModule.Version*
+- uid: WinForge.IModule.Status
+  commentId: P:WinForge.IModule.Status
+  id: Status
+  parent: WinForge.IModule
+  langs:
+  - csharp
+  - vb
+  name: Status
+  nameWithType: IModule.Status
+  fullName: WinForge.IModule.Status
+  type: Property
+  source:
+    id: Status
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IModule.cs
+    startLine: 6
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge
+  syntax:
+    content: int Status { get; }
+    parameters: []
+    return:
+      type: System.Int32
+    content.vb: ReadOnly Property Status As Integer
+  overload: WinForge.IModule.Status*
+- uid: WinForge.IModule.Initialize
+  commentId: M:WinForge.IModule.Initialize
+  id: Initialize
+  parent: WinForge.IModule
+  langs:
+  - csharp
+  - vb
+  name: Initialize()
+  nameWithType: IModule.Initialize()
+  fullName: WinForge.IModule.Initialize()
+  type: Method
+  source:
+    id: Initialize
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IModule.cs
+    startLine: 7
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge
+  syntax:
+    content: void Initialize()
+    content.vb: Sub Initialize()
+  overload: WinForge.IModule.Initialize*
+references:
+- uid: WinForge
+  commentId: N:WinForge
+  href: WinForge.html
+  name: WinForge
+  nameWithType: WinForge
+  fullName: WinForge
+- uid: WinForge.IModule.Name*
+  commentId: Overload:WinForge.IModule.Name
+  href: WinForge.IModule.html#WinForge_IModule_Name
+  name: Name
+  nameWithType: IModule.Name
+  fullName: WinForge.IModule.Name
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: WinForge.IModule.Version*
+  commentId: Overload:WinForge.IModule.Version
+  href: WinForge.IModule.html#WinForge_IModule_Version
+  name: Version
+  nameWithType: IModule.Version
+  fullName: WinForge.IModule.Version
+- uid: WinForge.IModule.Status*
+  commentId: Overload:WinForge.IModule.Status
+  href: WinForge.IModule.html#WinForge_IModule_Status
+  name: Status
+  nameWithType: IModule.Status
+  fullName: WinForge.IModule.Status
+- uid: System.Int32
+  commentId: T:System.Int32
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.int32
+  name: int
+  nameWithType: int
+  fullName: int
+  nameWithType.vb: Integer
+  fullName.vb: Integer
+  name.vb: Integer
+- uid: WinForge.IModule.Initialize*
+  commentId: Overload:WinForge.IModule.Initialize
+  href: WinForge.IModule.html#WinForge_IModule_Initialize
+  name: Initialize
+  nameWithType: IModule.Initialize
+  fullName: WinForge.IModule.Initialize

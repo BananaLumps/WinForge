@@ -1,0 +1,23 @@
+### YamlMime:ManagedReference
+items:
+- uid: WinForge.Base
+  commentId: N:WinForge.Base
+  id: WinForge.Base
+  children:
+  - WinForge.Base.ModuleLoader
+  langs:
+  - csharp
+  - vb
+  name: WinForge.Base
+  nameWithType: WinForge.Base
+  fullName: WinForge.Base
+  type: Namespace
+  assemblies:
+  - WinForge.Base
+references:
+- uid: WinForge.Base.ModuleLoader
+  commentId: T:WinForge.Base.ModuleLoader
+  href: WinForge.Base.ModuleLoader.html
+  name: ModuleLoader
+  nameWithType: ModuleLoader
+  fullName: WinForge.Base.ModuleLoader

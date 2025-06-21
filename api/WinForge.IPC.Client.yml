@@ -1,0 +1,561 @@
+### YamlMime:ManagedReference
+items:
+- uid: WinForge.IPC.Client
+  commentId: T:WinForge.IPC.Client
+  id: Client
+  parent: WinForge.IPC
+  children:
+  - WinForge.IPC.Client.RegisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  - WinForge.IPC.Client.SendMessageAsync(WinForge.IPC.IPCMessage)
+  - WinForge.IPC.Client.Shutdown(System.String)
+  - WinForge.IPC.Client.UnregisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  langs:
+  - csharp
+  - vb
+  name: Client
+  nameWithType: Client
+  fullName: WinForge.IPC.Client
+  type: Class
+  source:
+    id: Client
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IPC.cs
+    startLine: 11
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge.IPC
+  syntax:
+    content: public static class Client
+    content.vb: Public Module Client
+  inheritance:
+  - System.Object
+  inheritedMembers:
+  - System.Object.Equals(System.Object)
+  - System.Object.Equals(System.Object,System.Object)
+  - System.Object.GetHashCode
+  - System.Object.GetType
+  - System.Object.MemberwiseClone
+  - System.Object.ReferenceEquals(System.Object,System.Object)
+  - System.Object.ToString
+- uid: WinForge.IPC.Client.SendMessageAsync(WinForge.IPC.IPCMessage)
+  commentId: M:WinForge.IPC.Client.SendMessageAsync(WinForge.IPC.IPCMessage)
+  id: SendMessageAsync(WinForge.IPC.IPCMessage)
+  parent: WinForge.IPC.Client
+  langs:
+  - csharp
+  - vb
+  name: SendMessageAsync(IPCMessage)
+  nameWithType: Client.SendMessageAsync(IPCMessage)
+  fullName: WinForge.IPC.Client.SendMessageAsync(WinForge.IPC.IPCMessage)
+  type: Method
+  source:
+    id: SendMessageAsync
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IPC.cs
+    startLine: 15
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge.IPC
+  syntax:
+    content: public static Task SendMessageAsync(IPCMessage message)
+    parameters:
+    - id: message
+      type: WinForge.IPC.IPCMessage
+    return:
+      type: System.Threading.Tasks.Task
+    content.vb: Public Shared Function SendMessageAsync(message As IPCMessage) As Task
+  overload: WinForge.IPC.Client.SendMessageAsync*
+- uid: WinForge.IPC.Client.RegisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  commentId: M:WinForge.IPC.Client.RegisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  id: RegisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  parent: WinForge.IPC.Client
+  langs:
+  - csharp
+  - vb
+  name: RegisterListener(string, EventHandler<MessageReceivedEventArgs>)
+  nameWithType: Client.RegisterListener(string, EventHandler<MessageReceivedEventArgs>)
+  fullName: WinForge.IPC.Client.RegisterListener(string, System.EventHandler<WinForge.IPC.MessageReceivedEventArgs>)
+  type: Method
+  source:
+    id: RegisterListener
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IPC.cs
+    startLine: 24
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge.IPC
+  syntax:
+    content: public static void RegisterListener(string pipeName, EventHandler<MessageReceivedEventArgs> onMessageReceived)
+    parameters:
+    - id: pipeName
+      type: System.String
+    - id: onMessageReceived
+      type: System.EventHandler{WinForge.IPC.MessageReceivedEventArgs}
+    content.vb: Public Shared Sub RegisterListener(pipeName As String, onMessageReceived As EventHandler(Of MessageReceivedEventArgs))
+  overload: WinForge.IPC.Client.RegisterListener*
+  nameWithType.vb: Client.RegisterListener(String, EventHandler(Of MessageReceivedEventArgs))
+  fullName.vb: WinForge.IPC.Client.RegisterListener(String, System.EventHandler(Of WinForge.IPC.MessageReceivedEventArgs))
+  name.vb: RegisterListener(String, EventHandler(Of MessageReceivedEventArgs))
+- uid: WinForge.IPC.Client.UnregisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  commentId: M:WinForge.IPC.Client.UnregisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  id: UnregisterListener(System.String,System.EventHandler{WinForge.IPC.MessageReceivedEventArgs})
+  parent: WinForge.IPC.Client
+  langs:
+  - csharp
+  - vb
+  name: UnregisterListener(string, EventHandler<MessageReceivedEventArgs>)
+  nameWithType: Client.UnregisterListener(string, EventHandler<MessageReceivedEventArgs>)
+  fullName: WinForge.IPC.Client.UnregisterListener(string, System.EventHandler<WinForge.IPC.MessageReceivedEventArgs>)
+  type: Method
+  source:
+    id: UnregisterListener
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IPC.cs
+    startLine: 30
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge.IPC
+  syntax:
+    content: public static void UnregisterListener(string pipeName, EventHandler<MessageReceivedEventArgs> handler)
+    parameters:
+    - id: pipeName
+      type: System.String
+    - id: handler
+      type: System.EventHandler{WinForge.IPC.MessageReceivedEventArgs}
+    content.vb: Public Shared Sub UnregisterListener(pipeName As String, handler As EventHandler(Of MessageReceivedEventArgs))
+  overload: WinForge.IPC.Client.UnregisterListener*
+  nameWithType.vb: Client.UnregisterListener(String, EventHandler(Of MessageReceivedEventArgs))
+  fullName.vb: WinForge.IPC.Client.UnregisterListener(String, System.EventHandler(Of WinForge.IPC.MessageReceivedEventArgs))
+  name.vb: UnregisterListener(String, EventHandler(Of MessageReceivedEventArgs))
+- uid: WinForge.IPC.Client.Shutdown(System.String)
+  commentId: M:WinForge.IPC.Client.Shutdown(System.String)
+  id: Shutdown(System.String)
+  parent: WinForge.IPC.Client
+  langs:
+  - csharp
+  - vb
+  name: Shutdown(string)
+  nameWithType: Client.Shutdown(string)
+  fullName: WinForge.IPC.Client.Shutdown(string)
+  type: Method
+  source:
+    id: Shutdown
+    path: C:\Users\micha\source\repos\WinForge.Base\WinForge.Common\IPC.cs
+    startLine: 38
+  assemblies:
+  - WinForge.Common
+  namespace: WinForge.IPC
+  syntax:
+    content: public static void Shutdown(string pipeName)
+    parameters:
+    - id: pipeName
+      type: System.String
+    content.vb: Public Shared Sub Shutdown(pipeName As String)
+  overload: WinForge.IPC.Client.Shutdown*
+  nameWithType.vb: Client.Shutdown(String)
+  fullName.vb: WinForge.IPC.Client.Shutdown(String)
+  name.vb: Shutdown(String)
+references:
+- uid: WinForge.IPC
+  commentId: N:WinForge.IPC
+  href: WinForge.html
+  name: WinForge.IPC
+  nameWithType: WinForge.IPC
+  fullName: WinForge.IPC
+  spec.csharp:
+  - uid: WinForge
+    name: WinForge
+    href: WinForge.html
+  - name: .
+  - uid: WinForge.IPC
+    name: IPC
+    href: WinForge.IPC.html
+  spec.vb:
+  - uid: WinForge
+    name: WinForge
+    href: WinForge.html
+  - name: .
+  - uid: WinForge.IPC
+    name: IPC
+    href: WinForge.IPC.html
+- uid: System.Object
+  commentId: T:System.Object
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object
+  name: object
+  nameWithType: object
+  fullName: object
+  nameWithType.vb: Object
+  fullName.vb: Object
+  name.vb: Object
+- uid: System.Object.Equals(System.Object)
+  commentId: M:System.Object.Equals(System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  name: Equals(object)
+  nameWithType: object.Equals(object)
+  fullName: object.Equals(object)
+  nameWithType.vb: Object.Equals(Object)
+  fullName.vb: Object.Equals(Object)
+  name.vb: Equals(Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.Equals(System.Object,System.Object)
+  commentId: M:System.Object.Equals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  name: Equals(object, object)
+  nameWithType: object.Equals(object, object)
+  fullName: object.Equals(object, object)
+  nameWithType.vb: Object.Equals(Object, Object)
+  fullName.vb: Object.Equals(Object, Object)
+  name.vb: Equals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.Equals(System.Object,System.Object)
+    name: Equals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.GetHashCode
+  commentId: M:System.Object.GetHashCode
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  name: GetHashCode()
+  nameWithType: object.GetHashCode()
+  fullName: object.GetHashCode()
+  nameWithType.vb: Object.GetHashCode()
+  fullName.vb: Object.GetHashCode()
+  spec.csharp:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetHashCode
+    name: GetHashCode
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gethashcode
+  - name: (
+  - name: )
+- uid: System.Object.GetType
+  commentId: M:System.Object.GetType
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  name: GetType()
+  nameWithType: object.GetType()
+  fullName: object.GetType()
+  nameWithType.vb: Object.GetType()
+  fullName.vb: Object.GetType()
+  spec.csharp:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.GetType
+    name: GetType
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.gettype
+  - name: (
+  - name: )
+- uid: System.Object.MemberwiseClone
+  commentId: M:System.Object.MemberwiseClone
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  name: MemberwiseClone()
+  nameWithType: object.MemberwiseClone()
+  fullName: object.MemberwiseClone()
+  nameWithType.vb: Object.MemberwiseClone()
+  fullName.vb: Object.MemberwiseClone()
+  spec.csharp:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.MemberwiseClone
+    name: MemberwiseClone
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone
+  - name: (
+  - name: )
+- uid: System.Object.ReferenceEquals(System.Object,System.Object)
+  commentId: M:System.Object.ReferenceEquals(System.Object,System.Object)
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  name: ReferenceEquals(object, object)
+  nameWithType: object.ReferenceEquals(object, object)
+  fullName: object.ReferenceEquals(object, object)
+  nameWithType.vb: Object.ReferenceEquals(Object, Object)
+  fullName.vb: Object.ReferenceEquals(Object, Object)
+  name.vb: ReferenceEquals(Object, Object)
+  spec.csharp:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+  spec.vb:
+  - uid: System.Object.ReferenceEquals(System.Object,System.Object)
+    name: ReferenceEquals
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.referenceequals
+  - name: (
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: ','
+  - name: " "
+  - uid: System.Object
+    name: Object
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object
+  - name: )
+- uid: System.Object.ToString
+  commentId: M:System.Object.ToString
+  parent: System.Object
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  name: ToString()
+  nameWithType: object.ToString()
+  fullName: object.ToString()
+  nameWithType.vb: Object.ToString()
+  fullName.vb: Object.ToString()
+  spec.csharp:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+  spec.vb:
+  - uid: System.Object.ToString
+    name: ToString
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.object.tostring
+  - name: (
+  - name: )
+- uid: System
+  commentId: N:System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System
+  nameWithType: System
+  fullName: System
+- uid: WinForge.IPC.Client.SendMessageAsync*
+  commentId: Overload:WinForge.IPC.Client.SendMessageAsync
+  href: WinForge.IPC.Client.html#WinForge_IPC_Client_SendMessageAsync_WinForge_IPC_IPCMessage_
+  name: SendMessageAsync
+  nameWithType: Client.SendMessageAsync
+  fullName: WinForge.IPC.Client.SendMessageAsync
+- uid: WinForge.IPC.IPCMessage
+  commentId: T:WinForge.IPC.IPCMessage
+  parent: WinForge.IPC
+  href: WinForge.IPC.IPCMessage.html
+  name: IPCMessage
+  nameWithType: IPCMessage
+  fullName: WinForge.IPC.IPCMessage
+- uid: System.Threading.Tasks.Task
+  commentId: T:System.Threading.Tasks.Task
+  parent: System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.threading.tasks.task
+  name: Task
+  nameWithType: Task
+  fullName: System.Threading.Tasks.Task
+- uid: System.Threading.Tasks
+  commentId: N:System.Threading.Tasks
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system
+  name: System.Threading.Tasks
+  nameWithType: System.Threading.Tasks
+  fullName: System.Threading.Tasks
+  spec.csharp:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+  spec.vb:
+  - uid: System
+    name: System
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system
+  - name: .
+  - uid: System.Threading
+    name: Threading
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading
+  - name: .
+  - uid: System.Threading.Tasks
+    name: Tasks
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.threading.tasks
+- uid: WinForge.IPC.Client.RegisterListener*
+  commentId: Overload:WinForge.IPC.Client.RegisterListener
+  href: WinForge.IPC.Client.html#WinForge_IPC_Client_RegisterListener_System_String_System_EventHandler_WinForge_IPC_MessageReceivedEventArgs__
+  name: RegisterListener
+  nameWithType: Client.RegisterListener
+  fullName: WinForge.IPC.Client.RegisterListener
+- uid: System.String
+  commentId: T:System.String
+  parent: System
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.string
+  name: string
+  nameWithType: string
+  fullName: string
+  nameWithType.vb: String
+  fullName.vb: String
+  name.vb: String
+- uid: System.EventHandler{WinForge.IPC.MessageReceivedEventArgs}
+  commentId: T:System.EventHandler{WinForge.IPC.MessageReceivedEventArgs}
+  parent: System
+  definition: System.EventHandler`1
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<MessageReceivedEventArgs>
+  nameWithType: EventHandler<MessageReceivedEventArgs>
+  fullName: System.EventHandler<WinForge.IPC.MessageReceivedEventArgs>
+  nameWithType.vb: EventHandler(Of MessageReceivedEventArgs)
+  fullName.vb: System.EventHandler(Of WinForge.IPC.MessageReceivedEventArgs)
+  name.vb: EventHandler(Of MessageReceivedEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - uid: WinForge.IPC.MessageReceivedEventArgs
+    name: MessageReceivedEventArgs
+    href: WinForge.IPC.MessageReceivedEventArgs.html
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - uid: WinForge.IPC.MessageReceivedEventArgs
+    name: MessageReceivedEventArgs
+    href: WinForge.IPC.MessageReceivedEventArgs.html
+  - name: )
+- uid: System.EventHandler`1
+  commentId: T:System.EventHandler`1
+  isExternal: true
+  href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  name: EventHandler<TEventArgs>
+  nameWithType: EventHandler<TEventArgs>
+  fullName: System.EventHandler<TEventArgs>
+  nameWithType.vb: EventHandler(Of TEventArgs)
+  fullName.vb: System.EventHandler(Of TEventArgs)
+  name.vb: EventHandler(Of TEventArgs)
+  spec.csharp:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: <
+  - name: TEventArgs
+  - name: '>'
+  spec.vb:
+  - uid: System.EventHandler`1
+    name: EventHandler
+    isExternal: true
+    href: https://learn.microsoft.com/dotnet/api/system.eventhandler-1
+  - name: (
+  - name: Of
+  - name: " "
+  - name: TEventArgs
+  - name: )
+- uid: WinForge.IPC.Client.UnregisterListener*
+  commentId: Overload:WinForge.IPC.Client.UnregisterListener
+  href: WinForge.IPC.Client.html#WinForge_IPC_Client_UnregisterListener_System_String_System_EventHandler_WinForge_IPC_MessageReceivedEventArgs__
+  name: UnregisterListener
+  nameWithType: Client.UnregisterListener
+  fullName: WinForge.IPC.Client.UnregisterListener
+- uid: WinForge.IPC.Client.Shutdown*
+  commentId: Overload:WinForge.IPC.Client.Shutdown
+  href: WinForge.IPC.Client.html#WinForge_IPC_Client_Shutdown_System_String_
+  name: Shutdown
+  nameWithType: Client.Shutdown
+  fullName: WinForge.IPC.Client.Shutdown
