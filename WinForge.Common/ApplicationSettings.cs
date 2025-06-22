@@ -8,6 +8,7 @@ namespace WinForge.Settings
         public static string ModuleDirectory { get; set; } = "./modules";
         public static string LogFilePath { get; set; } = "./logs/app.log";
         public static int MaxLogFiles { get; set; } = 10;
+        public static int IPCResponseTimeout { get; set; } = 30000; // in milliseconds
     }
     public static class Persistence
     {

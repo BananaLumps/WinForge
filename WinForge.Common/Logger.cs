@@ -24,7 +24,7 @@ namespace WinForge.Common
 
             return Task.CompletedTask;
         }
-        /// <summary> Enable file logging to the specified file path.
+        /// <summary> Enable file logging to the specified file path. </summary>       
         public static void EnableFileLogging(string filePath)
         {
             lock (_fileLock)
@@ -35,8 +35,7 @@ namespace WinForge.Common
                 };
             }
         }
-        /// <summary>
-        /// Write a log message to console and to file
+        /// <summary> Write a log message to console and to file
         /// </summary>
         /// <param name="message">Log Message.</param>
         /// <param name="level">Log Level. Default: LogLevel.Info</param>

@@ -11,8 +11,11 @@ namespace WinForge.IPC
 {
     public static class Client
     {
+        public static event EventHandler<IPCMessage>? OnMessageReceived;
+        public static event EventHandler<IPCMessage>? OnResponseReceived;
+
         private static readonly ConcurrentDictionary<string, PipeMessenger> _messengers = new();
-        /// <summary> Sends a message to the specified named pipe.
+        /// <summary> Sends a message to the specified named pipe. Does not wait for a response. </summary>
         public static async Task SendMessageAsync(IPCMessage message)
         {
             using var client = new NamedPipeClientStream(".", message.To, PipeDirection.Out);
@@ -21,21 +24,28 @@ namespace WinForge.IPC
             var json = JsonSerializer.Serialize(message);
             await writer.WriteAsync(json);
         }
-        /// <summary> Register an event handler for a given pipe name.
-        public static void RegisterListener(string pipeName, EventHandler<MessageReceivedEventArgs> onMessageReceived)
+        public static async Task SendMessageAndWaitAsync(IPCMessage message, int timeoutMs = 0)
+        {
+            if (timeoutMs == 0) timeoutMs = Settings.Application.IPCResponseTimeout;
+            //ToDo: Implement a response waiting mechanism
+            await Task.Delay(1000);
+        }
+        /// <summary> Register an event handler for a given pipe name. </summary>        
+        public static void RegisterListener(string pipeName, EventHandler<IPCMessage> onMessageReceived, EventHandler<IPCMessage> onResponse)
         {
             var messenger = _messengers.GetOrAdd(pipeName, name => new PipeMessenger(name));
             messenger.OnMessageReceived += onMessageReceived;
+            messenger.OnResponseReceived += onResponse;
         }
-        /// <summary> Unregister an event handler for a given pipe name.
-        public static void UnregisterListener(string pipeName, EventHandler<MessageReceivedEventArgs> handler)
+        /// <summary> Unregister an event handler for a given pipe name. </summary>
+        public static void UnregisterListener(string pipeName, EventHandler<IPCMessage> handler)
         {
             if (_messengers.TryGetValue(pipeName, out var messenger))
             {
                 messenger.OnMessageReceived -= handler;
             }
         }
-        /// <summary> Dispose of the PipeMessenger for a given pipe name.
+        /// <summary> Dispose of the PipeMessenger for a given pipe name. </summary>
         public static void Shutdown(string pipeName)
         {
             if (_messengers.TryRemove(pipeName, out var messenger))
@@ -52,30 +62,57 @@ namespace WinForge.IPC
     //ToDo: Add message confirmation system
     public class IPCMessage
     {
-        /// <summary> Pipe name to send the message to.
+        /// <summary> Pipe name to send the message to. </summary>        
         public string To { get; set; }
-        /// <summary> Pipe name of the sender.
+        /// <summary> Pipe name of the sender. </summary>        
         public string From { get; set; }
-        /// <summary> The message content.
+        /// <summary> The message content. </summary>        
         public string Message { get; set; }
-        /// <summary> Optional data payloads, can be null.
+        /// <summary> Optional data payloads, can be null. </summary>       
         public object[]? Data { get; set; }
-        /// <summary> Timestamp of when the message was created.
+        /// <summary> Timestamp of when the message was created. </summary>       
         public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+        public Guid MessageId { get; set; } = Guid.NewGuid(); // Unique ID for tracking
+        public Guid ResponseId { get; set; } = Guid.Empty; // ID to match responses to requests
+        public IPCMessageType MessageType { get; set; } = IPCMessageType.Notification; // Type of the message
 
-        public IPCMessage(string to, string from, string message, object[]? data = null)
+        /// <summary> Response constructor, used to create a response message from a request. </summary>       
+        public IPCMessage(IPCMessage request, string response, object[]? data = null)
+        {
+            To = request.From;
+            From = request.To;
+            Message = response;
+            Data = data;
+            ResponseId = request.ResponseId;
+            MessageType = IPCMessageType.Response;
+        }
+        public IPCMessage(string to, string from, string message, IPCMessageType messageType, object[]? data = null)
         {
             To = to;
             From = from;
             Message = message;
             Data = data;
+            MessageType = messageType;
+            if (messageType == IPCMessageType.Request)
+            {
+                ResponseId = Guid.NewGuid();
+            }
         }
+    }
+    public enum IPCMessageType
+    {
+        Request, // A message that expects a response
+        Response, // Reply to a request
+        Notification, // Informational message without a response expected
+        Command // Command to execute, may or may not expect a response
     }
     public class PipeMessenger : IDisposable
     {
         private readonly string _pipeName;
         private bool _running = true;
-        public event EventHandler<MessageReceivedEventArgs>? OnMessageReceived;
+        public event EventHandler<IPCMessage>? OnMessageReceived;
+        public event EventHandler<IPCMessage>? OnResponseReceived;
+        public event EventHandler<IPCMessage>? OnCommandReceived;
         public PipeMessenger(string pipeName)
         {
             _pipeName = pipeName;
@@ -97,7 +134,22 @@ namespace WinForge.IPC
                     try
                     {
                         var data = JsonSerializer.Deserialize<IPCMessage>(msg);
-                        OnMessageReceived?.Invoke(this, new MessageReceivedEventArgs { From = data!.From, Message = data });
+                        switch (data!.MessageType)
+                        {
+                            case IPCMessageType.Request:
+                                OnMessageReceived?.Invoke(this, data);
+                                break;
+                            case IPCMessageType.Response:
+                                OnResponseReceived?.Invoke(this, data);
+                                break;
+                            case IPCMessageType.Notification:
+                                OnMessageReceived?.Invoke(this, data);
+                                break;
+                            case IPCMessageType.Command:
+                                OnCommandReceived?.Invoke(this, data);
+                                break;
+                        }
+
                     }
                     catch
                     {
@@ -120,22 +172,19 @@ namespace WinForge.IPC
         private static readonly CancellationTokenSource _cts = new();
         private static readonly ConcurrentDictionary<string, TcpClient> _connectedClients = new();
 
-        /// <summary> Returns a list of all currently connected client pipe names.
+        /// <summary> Returns a list of all currently connected client pipe names. </summary>        
         public static IReadOnlyCollection<string> GetConnectedTCPClientPipeNames()
         {
             return _connectedClients.Keys.ToList();
         }
-
         /// <summary> Starts UDP beacon + TCP server in background.</summary>
         public static void StartServer(string serverPipeName)
         {
             Task.Run(() => BroadcastLoopAsync(serverPipeName, _cts.Token));
             Task.Run(() => TcpServerLoopAsync(_cts.Token));
         }
-
         /// <summary> Stops beacon & TCP server and closes all sockets.</summary>
         public void Dispose() => _cts.Cancel();
-
         /// <summary> Listen once for a UDP beacon and return its IPEndPoint.</summary>
         public static async Task<IPEndPoint?> ListenForBeaconAsync(int timeoutMs = 35000)
         {
@@ -152,7 +201,6 @@ namespace WinForge.IPC
                 return null; // timeout
             }
         }
-
         /// <summary> Connect to server and send our pipe name as JSON handshake.</summary>
         public static async Task<TcpClient> ConnectAsync(IPEndPoint serverEndPoint, string clientPipeName, int timeoutMs = 3000)
         {
@@ -205,7 +253,7 @@ namespace WinForge.IPC
             var ns = client.GetStream();
             var sr = new StreamReader(ns, leaveOpen: true);
             var pipeName = string.Empty;
-            EventHandler<MessageReceivedEventArgs>? handler = null;
+            EventHandler<IPCMessage>? handler = null;
 
             // Expect first line to be JSON { "Pipe": "SomeName" }
             string? line;
@@ -236,10 +284,10 @@ namespace WinForge.IPC
             {
                 _ = Task.Run(() =>
                 {
-                    bool ok = SendToClient(pipeName, args.Message);
+                    bool ok = SendToClient(pipeName, args);
                 });
             };
-            Client.RegisterListener(pipeName, handler);
+            Client.RegisterListener(pipeName, handler, handler);
         }
         public static async Task<IPEndPoint?> WaitForBeaconAsync(int timeoutMs = 35000, CancellationToken ct = default)
         {
@@ -277,7 +325,7 @@ namespace WinForge.IPC
             }
         }
 
-        /// <summary> Sends a message to a connected TCP client using its pipe name.
+        /// <summary> Sends a message to a connected TCP client using its pipe name. </summary>        
         public static bool SendToClient(string pipeName, IPCMessage message)
         {
             if (!_connectedClients.TryGetValue(pipeName, out var tcpClient))
