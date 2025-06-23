@@ -9,12 +9,36 @@ namespace WinForge.Settings
         public static string LogFilePath { get; set; } = "./logs/app.log";
         public static int MaxLogFiles { get; set; } = 10;
         public static int IPCResponseTimeout { get; set; } = 30000; // in milliseconds
+
+        public static Dictionary<string, object> CustomSettings { get; set; } = new();
+        public static object? GetSetting(string key)
+        {
+            return CustomSettings.TryGetValue(key, out var value) ? value : null;
+        }
+        public static void SetSetting(string key, object value)
+        {
+            CustomSettings[key] = value;
+        }
+    }
+    public static class User
+    {
+        public static Dictionary<string, object> CustomSettings { get; set; } = new();
+        public static object? GetSetting(string key)
+        {
+            return CustomSettings.TryGetValue(key, out var value) ? value : null;
+        }
+        public static void SetSetting(string key, object value)
+        {
+            CustomSettings[key] = value;
+        }
     }
     public static class Persistence
     {
-        private const string SettingsFile = "ApplicationSettings.json";
+        private const string ApplicationSettingsFile = "ApplicationSettings.json";
+        private const string UserSettingsFile = "UserSettings.json";
 
-        public static bool Save()
+        /// <summary> Saves the application settings to a JSON file. </summary>
+        public static bool SaveApplicationSettings()
         {
             try
             {
@@ -23,7 +47,7 @@ namespace WinForge.Settings
                     .ToDictionary(p => p.Name, p => p.GetValue(null));
 
                 var json = JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true });
-                File.WriteAllText(SettingsFile, json);
+                File.WriteAllText(ApplicationSettingsFile, json);
                 return true;
             }
             catch (Exception ex)
@@ -33,14 +57,15 @@ namespace WinForge.Settings
             }
         }
 
-        public static bool Load()
+        /// <summary> Loads the application settings from a JSON file. </summary>   
+        public static bool LoadApplicationSettings()
         {
             try
             {
-                if (!File.Exists(SettingsFile))
+                if (!File.Exists(ApplicationSettingsFile))
                     return false;
 
-                var json = File.ReadAllText(SettingsFile);
+                var json = File.ReadAllText(ApplicationSettingsFile);
                 var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
                 if (dict == null) return false;
 
@@ -67,6 +92,66 @@ namespace WinForge.Settings
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading settings: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary> Saves the user settings to a JSON file. </summary>
+        public static bool SaveUserSettings()
+        {
+            try
+            {
+                var dict = typeof(User)                                   // <- static user container
+                    .GetProperties(BindingFlags.Public | BindingFlags.Static)
+                    .ToDictionary(p => p.Name, p => p.GetValue(null));
+
+                var json = JsonSerializer.Serialize(dict,
+                              new JsonSerializerOptions { WriteIndented = true });
+
+                File.WriteAllText(UserSettingsFile, json);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error saving user settings: {ex.Message}");
+                return false;
+            }
+        }
+
+        /// <summary> Loads the user settings from a JSON file. </summary>s
+        public static bool LoadUserSettings()
+        {
+            try
+            {
+                if (!File.Exists(UserSettingsFile))
+                    return false;
+
+                var json = File.ReadAllText(UserSettingsFile);
+                var dict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(json);
+                if (dict == null) return false;
+
+                foreach (var prop in typeof(User).GetProperties(BindingFlags.Public | BindingFlags.Static))
+                {
+                    if (!dict.TryGetValue(prop.Name, out var jsonValue))
+                        continue;
+
+                    try
+                    {
+                        var value = JsonSerializer.Deserialize(jsonValue.GetRawText(),
+                                                                prop.PropertyType);
+                        prop.SetValue(null, value);
+                    }
+                    catch
+                    {
+                        // Ignore incompatible or malformed values
+                    }
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading user settings: {ex.Message}");
                 return false;
             }
         }
