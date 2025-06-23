@@ -11,7 +11,7 @@ namespace WinForge.Base
         static List<IModule> modules = [];
         static async Task Main()
         {
-            Settings.Persistence.Load();
+            Settings.Persistence.LoadApplicationSettings();
             ReplaceUpdater();
             await Common.Logger.InitializeAsync();
             Client.RegisterListener(IPCPipeName, IPCMessageReceived, IPCMessageReceived);

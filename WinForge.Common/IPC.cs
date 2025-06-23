@@ -15,6 +15,7 @@ namespace WinForge.IPC
         public static event EventHandler<IPCMessage>? OnResponseReceived;
 
         private static readonly ConcurrentDictionary<string, PipeMessenger> _messengers = new();
+
         /// <summary> Sends a message to the specified named pipe. Does not wait for a response. </summary>
         public static async Task SendMessageAsync(IPCMessage message)
         {
@@ -24,12 +25,15 @@ namespace WinForge.IPC
             var json = JsonSerializer.Serialize(message);
             await writer.WriteAsync(json);
         }
+
+        /// <summary> Sends a message and waits for a response. </summary>
         public static async Task SendMessageAndWaitAsync(IPCMessage message, int timeoutMs = 0)
         {
             if (timeoutMs == 0) timeoutMs = Settings.Application.IPCResponseTimeout;
             //ToDo: Implement a response waiting mechanism
             await Task.Delay(1000);
         }
+
         /// <summary> Register an event handler for a given pipe name. </summary>        
         public static void RegisterListener(string pipeName, EventHandler<IPCMessage> onMessageReceived, EventHandler<IPCMessage> onResponse)
         {
@@ -37,6 +41,7 @@ namespace WinForge.IPC
             messenger.OnMessageReceived += onMessageReceived;
             messenger.OnResponseReceived += onResponse;
         }
+
         /// <summary> Unregister an event handler for a given pipe name. </summary>
         public static void UnregisterListener(string pipeName, EventHandler<IPCMessage> handler)
         {
@@ -45,6 +50,7 @@ namespace WinForge.IPC
                 messenger.OnMessageReceived -= handler;
             }
         }
+
         /// <summary> Dispose of the PipeMessenger for a given pipe name. </summary>
         public static void Shutdown(string pipeName)
         {
@@ -53,11 +59,6 @@ namespace WinForge.IPC
                 messenger.Dispose();
             }
         }
-    }
-    public class MessageReceivedEventArgs : EventArgs
-    {
-        public required string From { get; set; }
-        public required IPCMessage Message { get; set; }
     }
     //ToDo: Add message confirmation system
     public class IPCMessage
