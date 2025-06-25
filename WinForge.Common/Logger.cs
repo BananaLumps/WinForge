@@ -2,22 +2,19 @@
 
 namespace WinForge.Common
 {
-    public static class Logger
+    public class Logger : ILogger
     {
-        public enum LogLevel
-        {
-            Info,
-            Plugin,
-            Warning,
-            Error,
-            Debug
-        }
 
         private static readonly object _memoryLock = new();
-
         private static StreamWriter? _fileWriter;
         private static readonly object _fileLock = new();
-        public static Task InitializeAsync()
+        public string? Tag { get; set; } = null;
+        /// <summary> Creates a new Logger instance and initializes it synchronously. </summary>
+        public Logger()
+        {
+            InitializeAsync().GetAwaiter().GetResult();
+        }
+        public Task InitializeAsync()
         {
             RotateLogs(Settings.Application.LogFilePath, Settings.Application.MaxLogFiles);
             EnableFileLogging(Settings.Application.LogFilePath);
@@ -25,7 +22,7 @@ namespace WinForge.Common
             return Task.CompletedTask;
         }
         /// <summary> Enable file logging to the specified file path. </summary>       
-        public static void EnableFileLogging(string filePath)
+        public void EnableFileLogging(string filePath)
         {
             lock (_fileLock)
             {
@@ -41,7 +38,7 @@ namespace WinForge.Common
         /// <param name="level">Log Level. Default: LogLevel.Info</param>
         /// <param name="tag">Tag of the logging module. Default:  Null</param>
         /// <param name="includeTimestamp">Should the log line include a timestamp. Default: True</param>
-        public static void Log(string message, LogLevel level = LogLevel.Info, string? tag = null, bool includeTimestamp = true)
+        public void Log(string message, LogLevel level = LogLevel.Info, string? tag = null, bool includeTimestamp = true)
         {
             if (tag == null) tag = string.Empty;
             var output = includeTimestamp
@@ -50,27 +47,75 @@ namespace WinForge.Common
 
             lock (_memoryLock)
             {
-                switch (level)
-                {
-                    case LogLevel.Info:
-                        Console.ForegroundColor = ConsoleColor.Gray;
-                        break;
-                    case LogLevel.Warning:
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        break;
-                    case LogLevel.Error:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        break;
-                    case LogLevel.Debug:
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        break;
-                }
-
+                ColourSelector(level);
                 Console.WriteLine(output);
                 Console.ResetColor();
             }
         }
-        private static void RotateLogs(string filePath, int maxFiles)
+        /// <summary> Log a message to console and to file with the current tag.
+        public void Log(string message, LogLevel level = LogLevel.Info, bool includeTimestamp = true)
+        {
+            if (Tag == null) Tag = string.Empty;
+            var output = includeTimestamp
+                ? $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{Tag}][{level}] {message}"
+                : $"[{Tag}][{level}] {message}";
+
+            lock (_memoryLock)
+            {
+                ColourSelector(level);
+                Console.WriteLine(output);
+                Console.ResetColor();
+            }
+        }
+        /// <summary>  Log using default settings.
+        public void Log(string message, LogLevel level = LogLevel.Info)
+        {
+            if (Tag == null) Tag = string.Empty;
+            var output = $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{Tag}][{level}] {message}";
+
+            lock (_memoryLock)
+            {
+                ColourSelector(level);
+                Console.WriteLine(output);
+                Console.ResetColor();
+            }
+        }
+        /// <summary> Log a message to console and to file with a specific tag.
+        public void Log(string message, string tag, LogLevel level = LogLevel.Info, bool includeTimestamp = true)
+        {
+            if (tag == null) tag = string.Empty;
+            var output = includeTimestamp
+                ? $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}][{tag}][{level}] {message}"
+                : $"[{tag}][{level}] {message}";
+
+            lock (_memoryLock)
+            {
+                ColourSelector(level);
+                Console.WriteLine(output);
+                Console.ResetColor();
+            }
+        }
+        /// <summary> Sets the colour of the console based on the log level.
+        private static void ColourSelector(LogLevel level)
+        {
+            switch (level)
+            {
+                case LogLevel.Info:
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    break;
+                case LogLevel.Warning:
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    break;
+                case LogLevel.Error:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    break;
+                case LogLevel.Debug:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    break;
+            }
+        }
+        /// <summary> Rotate the log files based on the specified file path and maximum number of files. Removes oldest log files if over max </summary>s
+        private void RotateLogs(string filePath, int maxFiles)
         {
             Directory.CreateDirectory(Path.GetDirectoryName(filePath)!);
 
@@ -100,9 +145,13 @@ namespace WinForge.Common
             }
         }
 
-        public static void Info(string message) => Log(message, LogLevel.Info);
-        public static void Warn(string message) => Log(message, LogLevel.Warning);
-        public static void Error(string message) => Log(message, LogLevel.Error);
-        public static void Debug(string message) => Log(message, LogLevel.Debug);
+        /// <summary> Log an informational message. </summary>
+        public void Info(string message) => Log(message, LogLevel.Info);
+        /// <summary> Log a warning message. </summary>
+        public void Warn(string message) => Log(message, LogLevel.Warning);
+        /// <summary> Log a error message. </summary>
+        public void Error(string message) => Log(message, LogLevel.Error);
+        /// <summary> Log a debug message. </summary>
+        public void Debug(string message) => Log(message, LogLevel.Debug);
     }
 }
