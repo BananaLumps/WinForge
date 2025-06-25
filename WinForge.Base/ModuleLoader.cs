@@ -6,11 +6,14 @@ namespace WinForge.Base
     public static class ModuleLoader
     {
         /// <summary> Loads modules from the specified directory and initializes them in dependency order.</summary>
-        public static void Initialize(DependencyService dependencyService)
+        public static List<IModule> Initialize(DependencyService dependencyService)
         {
-            InitializeModules(DependencyOrderedList(LoadModules()), dependencyService);
+            var modules = DependencyOrderedList(LoadModules());
+            InitializeModules(modules, dependencyService);
             Logger.Instance.Log("ModuleLoader initialized.", LogLevel.Info, "ModuleLoader");
+            return modules.ToList();
         }
+
         /// <summary> Loads modules from the specified directory and creates an instance.</summary>
         public static List<IModule> LoadModules(string path = "./modules")
         {
@@ -111,6 +114,7 @@ namespace WinForge.Base
                 return true;
             }
         }
+
         /// <summary> Initializes the modules in the specified order.</summary>
         public static void InitializeModules(Queue<IModule> modules, DependencyService dependencyService)
         {
