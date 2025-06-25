@@ -5,6 +5,13 @@ namespace WinForge.Base
 {
     public static class ModuleLoader
     {
+        /// <summary> Loads modules from the specified directory and initializes them in dependency order.</summary>
+        public static void Initialize(DependencyService dependencyService)
+        {
+            InitializeModules(DependencyOrderedList(LoadModules()), dependencyService);
+            Logger.Instance.Log("ModuleLoader initialized.", LogLevel.Info, "ModuleLoader");
+        }
+        /// <summary> Loads modules from the specified directory and creates an instance.</summary>
         public static List<IModule> LoadModules(string path = "./modules")
         {
             var modules = new List<IModule>();
@@ -32,24 +39,25 @@ namespace WinForge.Base
                         {
                             if (modules.Any(m => m.Name == module.Name))
                             {
-                                Logger.Log($"Duplicate module found: {module.Name} v{module.Version} Skipping.", Logger.LogLevel.Warning, "ModuleLoader");
+                                Logger.Instance.Log($"Duplicate module found: {module.Name} v{module.Version} Skipping.", LogLevel.Warning, "ModuleLoader");
                                 continue;
                             }
                             modules.Add(module);
-                            Logger.Log($"Loaded module: {module.Name} v{module.Version}", Logger.LogLevel.Info, "ModuleLoader");
+                            Logger.Instance.Log($"Loaded module: {module.Name} v{module.Version}", LogLevel.Info, "ModuleLoader");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log($"Error loading from {dllPath}: {ex.Message}", Logger.LogLevel.Error, "ModuleLoader");
+                    Logger.Instance.Log($"Error loading from {dllPath}: {ex.Message}", LogLevel.Error, "ModuleLoader");
                 }
             }
 
             return modules;
         }
 
-        private static Queue<IModule> DependencyOrderedList(List<IModule> modules)
+        /// <summary> Returns a dependency-ordered list of modules.</summary>
+        public static Queue<IModule> DependencyOrderedList(List<IModule> modules)
         {
             var result = new Queue<IModule>();
             var visited = new HashSet<string>();
@@ -101,6 +109,15 @@ namespace WinForge.Base
                 visited.Add(module.Name);
                 result.Enqueue(module);
                 return true;
+            }
+        }
+        /// <summary> Initializes the modules in the specified order.</summary>
+        public static void InitializeModules(Queue<IModule> modules, DependencyService dependencyService)
+        {
+            while (modules.Count > 0)
+            {
+                var module = modules.Dequeue();
+                module.Initialize(dependencyService);
             }
         }
     }
