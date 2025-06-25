@@ -132,7 +132,7 @@ namespace WinForge.IPC
                     bool ok = SendToClient(pipeName, args);
                 });
             };
-            Client.RegisterListener(pipeName, handler, handler);
+            Client.RegisterListener(pipeName, handler, handler, handler);
         }
         public static async Task<IPEndPoint?> WaitForBeaconAsync(int timeoutMs = 35000, CancellationToken ct = default)
         {

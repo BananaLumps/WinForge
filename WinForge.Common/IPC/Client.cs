@@ -31,11 +31,13 @@ namespace WinForge.IPC
         }
 
         /// <summary> Register an event handler for a given pipe name. </summary>        
-        public static void RegisterListener(string pipeName, EventHandler<IPCMessage> onMessageReceived, EventHandler<IPCMessage> onResponse)
+        public static PipeMessenger RegisterListener(string pipeName, EventHandler<IPCMessage> onMessageReceived, EventHandler<IPCMessage> onResponse, EventHandler<IPCMessage> onCommand)
         {
             var messenger = _messengers.GetOrAdd(pipeName, name => new PipeMessenger(name));
             messenger.OnMessageReceived += onMessageReceived;
             messenger.OnResponseReceived += onResponse;
+            messenger.OnCommandReceived += onCommand;
+            return messenger;
         }
 
         /// <summary> Unregister an event handler for a given pipe name. </summary>
