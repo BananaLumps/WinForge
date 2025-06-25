@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Common", "WinForge
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Updater", "WinForge.Updater\WinForge.Updater.csproj", "{D002B37D-09EB-4F8D-B93C-0DD4AFBEA4D6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Core", "WinForge.Core\WinForge.Core.csproj", "{B6860B16-34EC-458B-84B5-65937B5848FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D002B37D-09EB-4F8D-B93C-0DD4AFBEA4D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D002B37D-09EB-4F8D-B93C-0DD4AFBEA4D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D002B37D-09EB-4F8D-B93C-0DD4AFBEA4D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6860B16-34EC-458B-84B5-65937B5848FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6860B16-34EC-458B-84B5-65937B5848FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6860B16-34EC-458B-84B5-65937B5848FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6860B16-34EC-458B-84B5-65937B5848FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

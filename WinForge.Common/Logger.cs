@@ -8,6 +8,8 @@ namespace WinForge.Common
         private static readonly object _memoryLock = new();
         private static StreamWriter? _fileWriter;
         private static readonly object _fileLock = new();
+        /// <summary> The default logger instance. </summary>
+        public static Logger Instance { get; private set; } = new Logger();
         public string? Tag { get; set; } = null;
         /// <summary> Creates a new Logger instance and initializes it synchronously. </summary>
         public Logger()
@@ -18,7 +20,7 @@ namespace WinForge.Common
         {
             RotateLogs(Settings.Application.LogFilePath, Settings.Application.MaxLogFiles);
             EnableFileLogging(Settings.Application.LogFilePath);
-
+            if (Instance == null) Instance = this;
             return Task.CompletedTask;
         }
         /// <summary> Enable file logging to the specified file path. </summary>       

@@ -117,9 +117,7 @@ namespace WinForge.IPC
                 pipeName = obj.GetProperty("Pipe").GetString() ?? "Unknown";
 
                 _connectedClients[pipeName] = client; // keep track by pipe name
-                Common.Logger.Info($"Client '{pipeName}' connected.");
-
-
+                Logger.Instance.Info($"Client '{pipeName}' connected.");
             }
             catch
             {
@@ -165,7 +163,7 @@ namespace WinForge.IPC
             catch (Exception ex)
             {
                 // malformed datagram or JSON error – log and ignore
-                Logger.Warn($"Beacon listener error: {ex.Message}");
+                Logger.Instance.Warn($"Beacon listener error: {ex.Message}");
                 return null;
             }
         }
@@ -186,7 +184,7 @@ namespace WinForge.IPC
             }
             catch (Exception ex)
             {
-                Logger.Warn($"[SendToClient] Failed to send to '{pipeName}': {ex.Message}");
+                Logger.Instance.Warn($"[SendToClient] Failed to send to '{pipeName}': {ex.Message}");
 
                 if (_connectedClients.TryRemove(pipeName, out var dead))
                     dead.Dispose();
