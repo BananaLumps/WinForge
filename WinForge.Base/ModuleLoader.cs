@@ -15,7 +15,7 @@ namespace WinForge.Base
                 return modules;
             }
 
-            string[] dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.TopDirectoryOnly);
+            string[] dllFiles = Directory.GetFiles(path, "*.dll", SearchOption.AllDirectories);
 
             foreach (string dllPath in dllFiles)
             {
