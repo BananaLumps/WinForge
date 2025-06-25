@@ -7,12 +7,13 @@ namespace WinForge.Common
         private readonly ConcurrentDictionary<Type, object> _services = new();
 
         /// <summary> Registers a dependency instance of type T. </summary>
-        internal void Register<T>(T instance) where T : class
+        public void Register<T>(T instance) where T : class
         {
             var type = typeof(T);
             if (_services.ContainsKey(type))
+            {
                 return;
-
+            }
             _services[type] = instance;
         }
 
