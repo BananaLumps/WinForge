@@ -44,5 +44,19 @@ namespace WinForge.Common
             instance = null;
             return false;
         }
+
+        /// <summary> Stops all registered modules by invoking their Stop method if available. </summary>
+        public void StopAllModules()
+        {
+            foreach (var service in _services.Values)
+            {
+                var stopMethod = service.GetType().GetMethod("Stop", Type.EmptyTypes);
+                if (stopMethod != null)
+                {
+                    stopMethod.Invoke(service, null);
+                    Console.WriteLine($"Stopped service: {service.GetType().Name}");
+                }
+            }
+        }
     }
 }
