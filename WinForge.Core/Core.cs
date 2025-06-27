@@ -5,6 +5,7 @@ namespace WinForge.Core
     /// <summary> Core handles keeping track of all modules and their instances. It will also handle all UI Form registration and instances </summary>
     public class Core
     {
+
         public static IDependencyService DependencyService { get; private set; } = new DependencyService();
         public static ILogger? Logger = null;
         //ToDo: Add data loading and saving functionality if required
