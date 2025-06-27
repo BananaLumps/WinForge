@@ -5,6 +5,7 @@ namespace WinForge.Common
     public interface ICommunication
     {
 
+        s
         /// <summary>
         /// The name of the named pipe used for IPC communication. To avoid conflicts, ensure that the name is unique across all registered pipes. It is recommended to use the project name as a prefix to the pipe name. Eg, WinForge.Common.MyPipeName
         /// </summary>
