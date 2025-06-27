@@ -366,3 +366,7 @@ _site/
 _site
 api
 api/
+/WinForge.Common/Version.txt
+/WinForge.Core/Version.txt
+/WinForge.Updater/Version.txt
+/WinForge.Base/Version.txt
