@@ -8,6 +8,7 @@ namespace WinForge.Base
     {
         private const string IPCPipeName = "WinForge.Base";
         public static bool running = true;
+        static ICommunication Communication = new IPC.Client();
         static List<IModule> modules = [];
         static PipeMessenger? pipeMessenger = null;
         static DependencyService dependencyService = new DependencyService();
@@ -15,20 +16,18 @@ namespace WinForge.Base
         static void Main()
         {
             Settings.Persistence.LoadApplicationSettings();
+            Settings.Persistence.LoadUserSettings();
 
             ReplaceUpdater();
             //ToDo:Run Updater
 
             dependencyService.Register<ILogger>(Logger);
-
-            pipeMessenger = Client.RegisterListener(IPCPipeName, IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
+            Communication.PipeName = "WinForge.Base";
+            pipeMessenger = Communication.RegisterListener(IPCPipeName, IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
 
             HTTPManager.StartServer(IPCPipeName);
 
-            //ToDo: Load Core module
-
-            modules = ModuleLoader.LoadModules();
-
+            modules = ModuleLoader.Initialize(dependencyService);
         }
         private static void IPCMessageReceived(object? sender, IPCMessage e)
         {
@@ -64,13 +63,12 @@ namespace WinForge.Base
                         break;
                     default:
                         valid = false;
-                        Logger.Log($"Unknown command: {message.Message}", LogLevel.Warning, "IPCCommandReceived");
+                        Logger.Log($"Unknown command: {message.Message}", LogLevel.Warning, "WinForge.Base");
                         break;
                 }
             }
-            if (valid) Logger.Log($"Received command: {message.Message}", LogLevel.Info, "IPCResponseReceived");
+            if (valid) Logger.Log($"Received command: {message.Message}", LogLevel.Info, "WinForge.Base");
         }
-
         public static void Stop()
         {
             running = false;
@@ -109,7 +107,7 @@ namespace WinForge.Base
                     catch (IOException ioEx)
                     {
                         // Likely in use; log and abort
-                        Logger.Log($"Could not delete existing Updater.exe: {ioEx.Message}", LogLevel.Error, "ReplaceUpdater");
+                        Logger.Log($"Could not delete existing Updater.exe: {ioEx.Message}", LogLevel.Error, "WinForge.Base");
                         return;
                     }
                 }
@@ -117,11 +115,11 @@ namespace WinForge.Base
                 // 3. Move the new Updater.exe into place
                 File.Move(newExe, exePath);
 
-                Logger.Log("Updater.exe successfully replaced.", LogLevel.Info, "ReplaceUpdater");
+                Logger.Log("Updater.exe successfully replaced.", LogLevel.Info, "WinForge.Base");
             }
             catch (Exception ex)
             {
-                Logger.Log($"{ex.Message}", LogLevel.Error, "ReplaceUpdater");
+                Logger.Log($"{ex.Message}", LogLevel.Error, "WinForge.Base");
             }
             finally
             {

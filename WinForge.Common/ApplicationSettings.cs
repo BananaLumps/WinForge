@@ -18,6 +18,7 @@ namespace WinForge.Settings
         public static void SetSetting(string key, object value)
         {
             CustomSettings[key] = value;
+            Persistence.SaveApplicationSettings();
         }
     }
     public static class User
@@ -30,6 +31,7 @@ namespace WinForge.Settings
         public static void SetSetting(string key, object value)
         {
             CustomSettings[key] = value;
+            Persistence.SaveUserSettings();
         }
     }
     public static class Persistence

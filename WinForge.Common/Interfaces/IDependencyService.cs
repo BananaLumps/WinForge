@@ -19,5 +19,12 @@ namespace WinForge.Common
         /// <param name="instance">When this method returns, contains the instance of type T if found; otherwise, null.</param>
         /// <returns>true if the dependency was found; otherwise, false.</returns>
         bool TryGetDependency<T>(out T? instance) where T : class;
+
+        /// <summary>
+        /// Registers a dependency instance of type T.
+        /// </summary>
+        /// <typeparam name="T">The type of dependency to register.</typeparam>
+        /// <param name="instance">The instance to register.</param>
+        void Register<T>(T instance) where T : class;
     }
 }

@@ -13,6 +13,7 @@ namespace WinForge.IPC
         private const int UdpPort = 5600;
         private const int TcpPort = 5601;
         private static readonly TimeSpan BeaconInterval = TimeSpan.FromSeconds(15);
+        private static ICommunication communication = new Client(); // Default communication method
 
         private static readonly CancellationTokenSource _cts = new();
         private static readonly ConcurrentDictionary<string, TcpClient> _connectedClients = new();
@@ -25,6 +26,7 @@ namespace WinForge.IPC
         /// <summary> Starts UDP beacon + TCP server in background.</summary>
         public static void StartServer(string serverPipeName)
         {
+            communication.PipeName = serverPipeName; // Ensure we have a communication instance
             Task.Run(() => BroadcastLoopAsync(serverPipeName, _cts.Token));
             Task.Run(() => TcpServerLoopAsync(_cts.Token));
         }
@@ -130,7 +132,7 @@ namespace WinForge.IPC
                     bool ok = SendToClient(pipeName, args);
                 });
             };
-            Client.RegisterListener(pipeName, handler, handler, handler);
+            communication.RegisterListener(pipeName, handler, handler, handler);
         }
         public static async Task<IPEndPoint?> WaitForBeaconAsync(int timeoutMs = 35000, CancellationToken ct = default)
         {
