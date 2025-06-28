@@ -8,7 +8,15 @@
         Error,
         Debug
     }
-
+    public enum ModuleStatus
+    {
+        NotStarted = 0,
+        Starting = 1,
+        Running = 2,
+        Stopping = 3,
+        Stopped = 4,
+        Error = 5
+    }
 }
 namespace WinForge.IPC
 {

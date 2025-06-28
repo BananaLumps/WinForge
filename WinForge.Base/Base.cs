@@ -1,4 +1,5 @@
 ﻿using System.IO.Compression;
+using System.Reflection;
 using WinForge.Common;
 using WinForge.IPC;
 
@@ -61,13 +62,17 @@ namespace WinForge.Base
                         valid = true;
                         ReplaceUpdater();
                         break;
+                    case "version":
+                        valid = true;
+                        Communication.SendMessageAsync(new IPCMessage(message, $"{Assembly.GetExecutingAssembly().GetName().Version?.ToString()}"));
+                        break;
                     default:
                         valid = false;
                         Logger.Log($"Unknown command: {message.Message}", LogLevel.Warning, "WinForge.Base");
                         break;
                 }
             }
-            if (valid) Logger.Log($"Received command: {message.Message}", LogLevel.Info, "WinForge.Base");
+            if (valid) Logger.Log($"Received and processed command: {message.Message}", LogLevel.Info, "WinForge.Base");
         }
         public static void Stop()
         {

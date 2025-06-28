@@ -1,0 +1,4 @@
+﻿namespace WinForge.Core
+{
+
+}

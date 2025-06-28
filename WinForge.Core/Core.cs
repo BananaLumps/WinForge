@@ -3,13 +3,21 @@
 namespace WinForge.Core
 {
     /// <summary> Core handles keeping track of all modules and their instances. It will also handle all UI Form registration and instances </summary>
-    public class Core
+    public class Core : IModule
     {
 
         public static IDependencyService DependencyService { get; private set; } = new DependencyService();
         public static ILogger? Logger = null;
         //ToDo: Add data loading and saving functionality if required
         public static Core Instance { get; } = new Core();
+        public Core(IDependencyService dependencyService)
+        {
+            Initialize(dependencyService);
+        }
+        public Core()
+        {
+            // Default constructor for singleton pattern
+        }
 
         /// <summary> Dictionary of all Form objects registered by modules. </summary>
         public Dictionary<string, object> Forms { get; } = new Dictionary<string, object>();
@@ -19,8 +27,18 @@ namespace WinForge.Core
 
         /// <summary> Dictionary of all active Form instances. </summary>
         public Dictionary<string, object> ActiveForms { get; } = new Dictionary<string, object>();
-        public static void Initialize(IDependencyService dependencyService)
+
+        public string Name => "WinForge.Core";
+
+        public string Version => Helpers.GetVersionFromFile();
+
+        public ModuleStatus Status { get; set; } = ModuleStatus.NotStarted;
+
+        public List<string> Dependencies => new List<string> { };
+
+        public void Initialize(IDependencyService dependencyService)
         {
+            Status = ModuleStatus.Starting;
             DependencyService = dependencyService ?? throw new ArgumentNullException(nameof(dependencyService));
 
             if (!DependencyService.TryGetDependency<ILogger>(out var logger))
@@ -30,6 +48,7 @@ namespace WinForge.Core
 
             Logger = logger;
             dependencyService.Register<Core>(Instance);
+            Status = ModuleStatus.Running;
         }
 
         /// <summary>
@@ -136,6 +155,22 @@ namespace WinForge.Core
         public bool IsFormActive(string key)
         {
             return ActiveForms.ContainsKey(key);
+        }
+        public void Stop()
+        {
+            Status = ModuleStatus.Stopping;
+            Logger?.Log($"Stopping module {Name}...", LogLevel.Info);
+            // Close all active forms
+            foreach (var key in ActiveForms.Keys.ToList())
+            {
+                CloseForm(key);
+            }
+            // Clear all dictionaries
+            Forms.Clear();
+            OptionsForms.Clear();
+            ActiveForms.Clear();
+            Status = ModuleStatus.Stopped;
+            Logger?.Log($"Module {Name} stopped successfully.", LogLevel.Info);
         }
     }
 }
