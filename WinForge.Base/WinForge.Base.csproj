@@ -23,5 +23,7 @@
     <ProjectReference Include="..\WinForge.Common\WinForge.Common.csproj" />
     <ProjectReference Include="..\WinForge.Updater\WinForge.Updater.csproj" />
   </ItemGroup>
-
+	<PropertyGroup>
+		<StartupObject>WinForge.Base.Base</StartupObject>
+	</PropertyGroup>
 </Project>

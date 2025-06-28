@@ -13,8 +13,8 @@ namespace WinForge.Base
         static List<IModule> modules = [];
         static PipeMessenger? pipeMessenger = null;
         static DependencyService dependencyService = new DependencyService();
-        public static ILogger Logger = new Logger();
-        static void Main()
+        public static ILogger Logger;
+        public static async Task Main(string[] args)
         {
             Settings.Persistence.LoadApplicationSettings();
             Settings.Persistence.LoadUserSettings();
@@ -29,6 +29,15 @@ namespace WinForge.Base
             HTTPManager.StartServer(IPCPipeName);
 
             modules = ModuleLoader.Initialize(dependencyService);
+            await RunMainLoopAsync();
+        }
+        private static async Task RunMainLoopAsync()
+        {
+            while (running)
+            {
+                await Task.Delay(100); // Adjust delay as needed
+                // You can add periodic checks or maintenance here if needed
+            }
         }
         private static void IPCMessageReceived(object? sender, IPCMessage e)
         {

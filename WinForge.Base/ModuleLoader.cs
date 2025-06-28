@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using System.Text.RegularExpressions;
 using WinForge.Common;
 
 namespace WinForge.Base
@@ -9,6 +10,7 @@ namespace WinForge.Base
         public static List<IModule> Initialize(DependencyService dependencyService)
         {
             var modules = DependencyOrderedList(LoadModules());
+            LoadModulesToAppDomain(modules.ToList());
             InitializeModules(modules, dependencyService);
             Logger.Instance.Log("ModuleLoader initialized.", LogLevel.Info, "ModuleLoader");
             return modules.ToList();
@@ -21,7 +23,7 @@ namespace WinForge.Base
 
             if (!Directory.Exists(path))
             {
-                Console.WriteLine($"Module directory not found: {path}");
+                Logger.Instance.Log($"Module directory not found: {path}", LogLevel.Info);
                 return modules;
             }
 
@@ -29,8 +31,10 @@ namespace WinForge.Base
 
             foreach (string dllPath in dllFiles)
             {
+            Try:
                 try
                 {
+
                     Assembly assembly = Assembly.LoadFrom(dllPath);
 
                     var moduleTypes = assembly.GetTypes()
@@ -46,19 +50,64 @@ namespace WinForge.Base
                                 continue;
                             }
                             modules.Add(module);
+
                             Logger.Instance.Log($"Loaded module: {module.Name} v{module.Version}", LogLevel.Info, "ModuleLoader");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.Log($"Error loading from {dllPath}: {ex.Message}", LogLevel.Error, "ModuleLoader");
-                }
-            }
+                    Logger.Instance.Log($"Error loading from {dllPath}: {ex.Message}. Attempting to resolve", LogLevel.Error, "ModuleLoader");
 
+                    if (string.IsNullOrWhiteSpace(ex.Message))
+                        return null;
+
+                    // This regex looks for: 'Assembly.Name, Version=...'
+                    var match = Regex.Match(ex.Message, @"'([^',]+),\s*Version=");
+                    LoadFromExternalLibrary(match.Groups[1].Value + ".dll");
+                    // LoadModules(path); // Retry loading modules after attempting to resolve the dependency
+                    goto Try;
+
+                }
+
+            }
             return modules;
         }
+        public static void LoadModulesToAppDomain(List<IModule> modules)
+        {
+            foreach (var module in modules)
+            {
+                try
+                {
+                    // Path to the DLL based on module name
+                    string dllPath = $"./modules/{module.Name}.dll";
 
+                    if (!File.Exists(dllPath))
+                    {
+                        Logger.Instance.Log($"Module DLL not found: {dllPath}", LogLevel.Error);
+                        continue;
+                    }
+
+                    // Check if already loaded to avoid duplicates (optional)
+                    var alreadyLoaded = AppDomain.CurrentDomain.GetAssemblies()
+                        .Any(a => string.Equals(Path.GetFileNameWithoutExtension(a.Location), module.Name, StringComparison.OrdinalIgnoreCase));
+
+                    if (alreadyLoaded)
+                    {
+                        Logger.Instance.Log($"Module already loaded: {module.Name}", LogLevel.Info);
+                        continue;
+                    }
+
+                    // Load the DLL into the current AppDomain
+                    Assembly.LoadFrom(dllPath);
+                    Logger.Instance.Info($"Loaded module assembly: {module.Name}");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Instance.Info($"Failed to load module '{module.Name}': {ex.Message}");
+                }
+            }
+        }
         /// <summary> Returns a dependency-ordered list of modules.</summary>
         public static Queue<IModule> DependencyOrderedList(List<IModule> modules)
         {
@@ -115,6 +164,44 @@ namespace WinForge.Base
             }
         }
 
+        /// <summary>
+        /// Loads a DLL from the ./ExternalLibrarys folder.
+        /// </summary>
+        /// <param name="dllName">The name of the DLL (with or without .dll extension).</param>
+        /// <returns>The loaded Assembly, or null if it could not be loaded.</returns>
+        public static Assembly? LoadFromExternalLibrary(string dllName)
+        {
+            if (string.IsNullOrWhiteSpace(dllName))
+                return null;
+
+            // Ensure it ends with .dll
+            if (!dllName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                dllName += ".dll";
+
+            // Build full path
+            string basePath = Path.Combine(AppContext.BaseDirectory, "ExternalLibrarys");
+            string fullPath = Path.Combine(basePath, dllName);
+
+            // Attempt to load
+            if (File.Exists(fullPath))
+            {
+                try
+                {
+                    return Assembly.LoadFrom(fullPath);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Failed to load assembly '{dllName}': {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Assembly not found at: {fullPath}");
+            }
+
+            return null;
+        }
+
         /// <summary> Initializes the modules in the specified order.</summary>
         public static void InitializeModules(Queue<IModule> modules, DependencyService dependencyService)
         {
@@ -122,6 +209,8 @@ namespace WinForge.Base
             {
                 var module = modules.Dequeue();
                 module.Initialize(dependencyService);
+
+                if (module.Status == ModuleStatus.NotStarted) module.Initialize(dependencyService);
             }
         }
     }
