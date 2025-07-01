@@ -10,10 +10,12 @@ namespace WinForge.Base
         private const string IPCPipeName = "WinForge.Base";
         public static bool running = true;
         static ICommunication Communication = new IPC.Client();
+        static Client IPC = new Client();
         static List<IModule> modules = [];
         static PipeMessenger? pipeMessenger = null;
         static DependencyService dependencyService = new DependencyService();
         public static ILogger Logger;
+        public static bool Headless = false; // Set to true if you want to run without a UI
         public static async Task Main(string[] args)
         {
             Settings.Persistence.LoadApplicationSettings();
@@ -23,12 +25,27 @@ namespace WinForge.Base
             //ToDo:Run Updater
 
             dependencyService.Register<ILogger>(Logger);
+            Logger = dependencyService.GetDependency<Logger>() ?? new Logger();
             Communication.PipeName = "WinForge.Base";
             pipeMessenger = Communication.RegisterListener(IPCPipeName, IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
 
             HTTPManager.StartServer(IPCPipeName);
+            //if (!Headless)
+            //{
+            //    string exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WinForge.UI.Main.exe");
 
+            //    var psi = new ProcessStartInfo
+            //    {
+            //        FileName = "explorer.exe",
+            //        Arguments = $"\"{exePath}\"",
+            //        UseShellExecute = true,
+            //        WorkingDirectory = Path.GetDirectoryName(exePath)
+            //    };
+
+            //    Process.Start(psi);
+            //}
             modules = ModuleLoader.Initialize(dependencyService);
+
             await RunMainLoopAsync();
         }
         private static async Task RunMainLoopAsync()
@@ -36,11 +53,15 @@ namespace WinForge.Base
             while (running)
             {
                 await Task.Delay(100); // Adjust delay as needed
-                // You can add periodic checks or maintenance here if needed
+                                       // IPC.RegisterListener("WinForge.UI.Main", IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
+                                       // IPC.SendMessageAsync(new IPCMessage("WinForge.UI.Main", "WinForge.Base", "showForm", IPCMessageType.Command, new object[] { })).Wait();
+                                       //Logger.Log("Running main loop...", LogLevel.Debug, "WinForge.Base");
+                                       // You can add periodic checks or maintenance here if needed
             }
         }
         private static void IPCMessageReceived(object? sender, IPCMessage e)
         {
+            Logger.Log($"Received message: {e.Message}", LogLevel.Info, "IPCMessageReceived");
             IPCMessage message = e;
             if (message.To == IPCPipeName)
             {
@@ -49,23 +70,29 @@ namespace WinForge.Base
         }
         private static void IPCResponseReceived(object? sender, IPCMessage e)
         {
+            Logger.Log($"Received response: {e.Message}", LogLevel.Info, "IPCResponseReceived");
             IPCMessage message = e;
             if (message.To == IPCPipeName)
             {
-                Logger.Log($"Received response with ID: {message.ResponseId}", LogLevel.Info, "IPCResponseReceived");
+                Logger.Log($"Received response with ID: {message.ResponseId}", LogLevel.Info, "WinForge.Base.IpcResponseReceived");
             }
         }
         private static void IPCCommandReceived(object? sender, IPCMessage e)
         {
+            Logger.Log($"Received command: {e.Message}", LogLevel.Info, "WinForge.Base.IPCCommandReceived");
             IPCMessage message = e;
             bool valid = false;
-            if (message.To == IPCPipeName)
+            if (message.To == IPCPipeName || message.To == "WinForge.UI.Main")
             {
                 switch (message.Message.ToLowerInvariant())
                 {
                     case "stop":
                         valid = true;
                         Stop();
+                        break;
+                    case "showForm":
+                        Logger.Log($"Received command to show form: {message.Data[0]}", LogLevel.Info, "WinForge.Base");
+                        valid = true;
                         break;
                     case "replaceupdater":
                         valid = true;
@@ -86,7 +113,7 @@ namespace WinForge.Base
         public static void Stop()
         {
             running = false;
-            Console.WriteLine("Stopping WinForge...");
+            Logger.Log("Stopping WinForge...", LogLevel.Info, "WinForge.Base");
         }
         /// <summary> Replaces the Updater.exe with a new version from Updater.zip in the base directory. </summary>        
         private static void ReplaceUpdater()

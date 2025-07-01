@@ -13,4 +13,8 @@
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\WinForge.Common\WinForge.Common.csproj" />
+  </ItemGroup>
+
 </Project>

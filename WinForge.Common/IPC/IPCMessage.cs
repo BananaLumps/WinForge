@@ -39,5 +39,11 @@
                 ResponseId = Guid.NewGuid();
             }
         }
+        public IPCMessage()
+        {
+            To = string.Empty;
+            From = string.Empty;
+            Message = string.Empty;
+        }
     }
 }

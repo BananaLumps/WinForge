@@ -6,7 +6,8 @@
         Plugin,
         Warning,
         Error,
-        Debug
+        Debug,
+        Verbose
     }
     public enum ModuleStatus
     {

@@ -12,7 +12,7 @@ namespace WinForge.Base
             var modules = DependencyOrderedList(LoadModules());
             LoadModulesToAppDomain(modules.ToList());
             InitializeModules(modules, dependencyService);
-            Logger.Instance.Log("ModuleLoader initialized.", LogLevel.Info, "ModuleLoader");
+            Logger.Instance.Log("ModuleLoader initialized.", LogLevel.Info, "WinForge.Common.ModuleLoader");
             return modules.ToList();
         }
 
@@ -23,7 +23,7 @@ namespace WinForge.Base
 
             if (!Directory.Exists(path))
             {
-                Logger.Instance.Log($"Module directory not found: {path}", LogLevel.Info);
+                Logger.Instance.Log($"Module directory not found: {path}", LogLevel.Info, "WinForge.Common.ModuleLoader");
                 return modules;
             }
 
@@ -46,18 +46,18 @@ namespace WinForge.Base
                         {
                             if (modules.Any(m => m.Name == module.Name))
                             {
-                                Logger.Instance.Log($"Duplicate module found: {module.Name} v{module.Version} Skipping.", LogLevel.Warning, "ModuleLoader");
+                                Logger.Instance.Log($"Duplicate module found: {module.Name} v{module.Version} Skipping.", LogLevel.Warning, "WinForge.Common.ModuleLoader");
                                 continue;
                             }
                             modules.Add(module);
 
-                            Logger.Instance.Log($"Loaded module: {module.Name} v{module.Version}", LogLevel.Info, "ModuleLoader");
+                            Logger.Instance.Log($"Loaded module: {module.Name} v{module.Version}", LogLevel.Info, "WinForge.Common.ModuleLoader");
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.Log($"Error loading from {dllPath}: {ex.Message}. Attempting to resolve", LogLevel.Error, "ModuleLoader");
+                    Logger.Instance.Log($"Error loading from {dllPath}: {ex.Message}. Attempting to resolve", LogLevel.Warning, "WinForge.Common.ModuleLoader");
 
                     if (string.IsNullOrWhiteSpace(ex.Message))
                         return null;
@@ -65,7 +65,6 @@ namespace WinForge.Base
                     // This regex looks for: 'Assembly.Name, Version=...'
                     var match = Regex.Match(ex.Message, @"'([^',]+),\s*Version=");
                     LoadFromExternalLibrary(match.Groups[1].Value + ".dll");
-                    // LoadModules(path); // Retry loading modules after attempting to resolve the dependency
                     goto Try;
 
                 }
@@ -84,7 +83,7 @@ namespace WinForge.Base
 
                     if (!File.Exists(dllPath))
                     {
-                        Logger.Instance.Log($"Module DLL not found: {dllPath}", LogLevel.Error);
+                        Logger.Instance.Log($"Module DLL not found: {dllPath}", LogLevel.Error, "WinForge.Common.ModuleLoader");
                         continue;
                     }
 
@@ -94,17 +93,17 @@ namespace WinForge.Base
 
                     if (alreadyLoaded)
                     {
-                        Logger.Instance.Log($"Module already loaded: {module.Name}", LogLevel.Info);
+                        Logger.Instance.Log($"Module already loaded: {module.Name}", LogLevel.Info, "WinForge.Common.ModuleLoader");
                         continue;
                     }
 
                     // Load the DLL into the current AppDomain
                     Assembly.LoadFrom(dllPath);
-                    Logger.Instance.Info($"Loaded module assembly: {module.Name}");
+                    Logger.Instance.Log($"Loaded module assembly: {module.Name}", LogLevel.Info, "WinForge.Common.ModuleLoader");
                 }
                 catch (Exception ex)
                 {
-                    Logger.Instance.Info($"Failed to load module '{module.Name}': {ex.Message}");
+                    Logger.Instance.Log($"Failed to load module '{module.Name}': {ex.Message}", LogLevel.Info, "WinForge.Common.ModuleLoader");
                 }
             }
         }
@@ -165,7 +164,7 @@ namespace WinForge.Base
         }
 
         /// <summary>
-        /// Loads a DLL from the ./ExternalLibrarys folder.
+        /// Loads a DLL from the ./ExternalLibraries folder.
         /// </summary>
         /// <param name="dllName">The name of the DLL (with or without .dll extension).</param>
         /// <returns>The loaded Assembly, or null if it could not be loaded.</returns>
@@ -179,7 +178,7 @@ namespace WinForge.Base
                 dllName += ".dll";
 
             // Build full path
-            string basePath = Path.Combine(AppContext.BaseDirectory, "ExternalLibrarys");
+            string basePath = Path.Combine(AppContext.BaseDirectory, "ExternalLibraries");
             string fullPath = Path.Combine(basePath, dllName);
 
             // Attempt to load
@@ -191,12 +190,12 @@ namespace WinForge.Base
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Failed to load assembly '{dllName}': {ex.Message}");
+                    Logger.Instance.Log($"Failed to load assembly '{dllName}': {ex.Message}", LogLevel.Error, "WinForge.Common.ModuleLoader");
                 }
             }
             else
             {
-                Console.WriteLine($"Assembly not found at: {fullPath}");
+                Logger.Instance.Log($"Assembly not found at: {fullPath}", LogLevel.Error, "WinForge.Common.ModuleLoader");
             }
 
             return null;
@@ -205,12 +204,19 @@ namespace WinForge.Base
         /// <summary> Initializes the modules in the specified order.</summary>
         public static void InitializeModules(Queue<IModule> modules, DependencyService dependencyService)
         {
-            while (modules.Count > 0)
+            try
             {
-                var module = modules.Dequeue();
-                module.Initialize(dependencyService);
-
-                if (module.Status == ModuleStatus.NotStarted) module.Initialize(dependencyService);
+                while (modules.Count > 0)
+                {
+                    var module = modules.Dequeue();
+                    module.Initialize(dependencyService);
+                    Logger.Instance.Log($"Initialized module: {module.Name} v{module.Version}", LogLevel.Info, "WinForge.Common.ModuleLoader");
+                    if (module.Status == ModuleStatus.NotStarted) module.Initialize(dependencyService);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.Instance.Log($"Error initializing modules: {e.Message}", LogLevel.Error, "WinForge.Common.ModuleLoader");
             }
         }
     }

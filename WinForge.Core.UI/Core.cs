@@ -1,4 +1,9 @@
-﻿using WinForge.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Windows.Forms;
+using WinForge.Common;
+using WinForge.IPC;
 
 namespace WinForge.Core
 {
@@ -8,6 +13,7 @@ namespace WinForge.Core
 
         public static IDependencyService DependencyService { get; private set; } = new DependencyService();
         public static ILogger? Logger = null;
+        public static ICommunication Communication;
         //ToDo: Add data loading and saving functionality if required
         public static Core Instance { get; } = new Core();
         public Core(IDependencyService dependencyService)
@@ -48,11 +54,15 @@ namespace WinForge.Core
 
             Logger = dependencyService.GetDependency<Logger>();
             dependencyService.Register<Core>(Instance);
-            WinForge.Common.Logger.Instance.Log($"Initializing module {Name} v{Version}...", LogLevel.Info);
+            Logger.Log($"Initializing module {Name} v{Version}...", LogLevel.Info, "WinForge.Core");
             Status = ModuleStatus.Running;
-            Form mainForm = new UICore();
-            mainForm.Show();
-            Application.Run(new UICore());
+            Communication = new IPC.Client
+            {
+                PipeName = "WinForge.Core"
+            };
+            Logger.Log($"Module {Name} initialized successfully.", LogLevel.Info, "WinForge.Core");
+            Communication.SendMessageAsync(new IPCMessage("WinForge.UI.Main", "WinForge.Core", "showForm", IPCMessageType.Command, new object[] { new UICore() }));
+
         }
 
         /// <summary>
@@ -67,7 +77,7 @@ namespace WinForge.Core
         {
             if (!typeof(Form).IsAssignableFrom(formType))
             {
-                Logger?.Error($"Type '{formType.Name}' is not a Form type.");
+                Logger?.Log($"Type '{formType.Name}' is not a Form type.", LogLevel.Error, "WinForge.Core");
                 return false;
             }
 
@@ -84,7 +94,7 @@ namespace WinForge.Core
         {
             if (!typeof(Form).IsAssignableFrom(formType))
             {
-                Logger?.Error($"Type '{formType.Name}' is not a Form type.");
+                Logger?.Log($"Type '{formType.Name}' is not a Form type.", LogLevel.Error, "WinForge.Core");
                 return false;
             }
 
@@ -100,7 +110,7 @@ namespace WinForge.Core
         {
             if (IsFormActive(key))
             {
-                Logger?.Warn($"Form key '{key}' is already active. Either rename the instance or use GetActiveForm.");
+                Logger?.Log($"Form key '{key}' is already active. Either rename the instance or use GetActiveForm.", LogLevel.Warning, "WinForge.Core");
                 return null;
             }
             if (Forms.TryGetValue(key, out var formType))
@@ -114,14 +124,14 @@ namespace WinForge.Core
                     }
                     catch (Exception ex)
                     {
-                        Logger?.Error($"Failed to create instance of form '{key}': {ex.Message}");
+                        Logger?.Log($"Failed to create instance of form '{key}': {ex.Message}", LogLevel.Error, "WinForge.Core");
                         return null;
                     }
                 }
-                Logger?.Warn($"Form type '{key}' is not a valid Form type.");
+                Logger?.Log($"Form type '{key}' is not a valid Form type.", LogLevel.Warning, "WinForge.Core");
                 return null;
             }
-            Logger?.Warn($"Form type '{key}' not found in Forms dictionary.");
+            Logger?.Log($"Form type '{key}' not found in Forms dictionary.", LogLevel.Warning, "WinForge.Core");
             return null;
         }
 
@@ -139,10 +149,10 @@ namespace WinForge.Core
                     form.Close();
                     return true;
                 }
-                Logger?.Warn($"Form '{key}' is already disposed.");
+                Logger?.Log($"Form '{key}' is already disposed.", LogLevel.Warning, "WinForge.Core");
                 return false;
             }
-            Logger?.Warn($"Form '{key}' not found in Forms dictionary.");
+            Logger?.Log($"Form '{key}' not found in Forms dictionary.", LogLevel.Warning, "WinForge.Core");
             return false;
         }
 
@@ -153,7 +163,7 @@ namespace WinForge.Core
             {
                 return form;
             }
-            Logger?.Warn($"Active form '{key}' not found in ActiveForms dictionary. Creating new instance of {key}.");
+            Logger?.Log($"Active form '{key}' not found in ActiveForms dictionary. Creating new instance of {key}.", LogLevel.Warning, "WinForge.Core");
             return LoadForm(key);
         }
         public bool IsFormActive(string key)
@@ -174,7 +184,7 @@ namespace WinForge.Core
             OptionsForms.Clear();
             ActiveForms.Clear();
             Status = ModuleStatus.Stopped;
-            Logger?.Log($"Module {Name} stopped successfully.", LogLevel.Info);
+            Logger?.Log($"Module {Name} stopped successfully.", LogLevel.Info, "WinForge.Core");
         }
     }
 }

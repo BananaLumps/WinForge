@@ -26,13 +26,22 @@ namespace WinForge.Common
         /// <summary> Enable file logging to the specified file path. </summary>       
         public void EnableFileLogging(string filePath)
         {
-            lock (_fileLock)
+            try
             {
-                _fileWriter = new StreamWriter(File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
+                lock (_fileLock)
                 {
-                    AutoFlush = true
-                };
+                    _fileWriter = new StreamWriter(File.Open(filePath, FileMode.Append, FileAccess.Write, FileShare.Read))
+                    {
+                        AutoFlush = true
+                    };
+                }
             }
+            catch (IOException)
+            {
+
+                Console.WriteLine($"Failed to open log file at {filePath}. There may be a logger instance already running");
+            }
+
         }
         /// <summary> Write a log message to console and to file
         /// </summary>
