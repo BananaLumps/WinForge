@@ -1,7 +1,10 @@
 ﻿using System.IO.Compression;
 using System.Reflection;
+using System.Windows.Forms;
 using WinForge.Common;
 using WinForge.IPC;
+using WinForge.UI.Main;
+
 
 namespace WinForge.Base
 {
@@ -14,9 +17,11 @@ namespace WinForge.Base
         static List<IModule> modules = [];
         static PipeMessenger? pipeMessenger = null;
         static DependencyService dependencyService = new DependencyService();
-        public static ILogger Logger;
+        public static ILogger? Logger;
         public static bool Headless = false; // Set to true if you want to run without a UI
-        public static async Task Main(string[] args)
+        public static Form? MainForm = null; // Reference to the main form if needed
+        static bool runOnce = false;
+        public static async Task Initialize()
         {
             Settings.Persistence.LoadApplicationSettings();
             Settings.Persistence.LoadUserSettings();
@@ -24,39 +29,84 @@ namespace WinForge.Base
             ReplaceUpdater();
             //ToDo:Run Updater
 
-            dependencyService.Register<ILogger>(Logger);
-            Logger = dependencyService.GetDependency<Logger>() ?? new Logger();
+            dependencyService.Register<Logger>((Logger)Logger! ?? new Logger());
+            Logger = dependencyService.GetDependency<Logger>();
             Communication.PipeName = "WinForge.Base";
             pipeMessenger = Communication.RegisterListener(IPCPipeName, IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
 
             HTTPManager.StartServer(IPCPipeName);
-            //if (!Headless)
-            //{
-            //    string exePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "WinForge.UI.Main.exe");
 
-            //    var psi = new ProcessStartInfo
-            //    {
-            //        FileName = "explorer.exe",
-            //        Arguments = $"\"{exePath}\"",
-            //        UseShellExecute = true,
-            //        WorkingDirectory = Path.GetDirectoryName(exePath)
-            //    };
-
-            //    Process.Start(psi);
-            //}
             modules = ModuleLoader.Initialize(dependencyService);
 
+            WaitForMainFormWithCancellation();
+            var method = typeof(MainForm).GetMethod("Init", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+            if (method != null && MainForm != null)
+            {
+                method.Invoke(MainForm, new object[] { dependencyService });
+            }
+
             await RunMainLoopAsync();
+        }
+        public static Form? WaitForMainFormWithCancellation(int timeoutMilliseconds = 5000)
+        {
+            using var cts = new CancellationTokenSource();
+            cts.CancelAfter(timeoutMilliseconds);
+            var token = cts.Token;
+
+            while (!token.IsCancellationRequested)
+            {
+                var form = Application.OpenForms["MainForm"];
+                if (form != null)
+                    return form;
+
+                Application.DoEvents(); // Optional for responsiveness
+                Thread.Sleep(50); // Light polling
+            }
+            Logger.Log("MainForm not found within the timeout period.", LogLevel.Warning, "WinForge.Base");
+            return null; // Timed out
+        }
+        public static void Main()
+        {
+
+            if (!Headless)
+            {
+                // Create a separate thread for running the UI with STA
+                Thread uiThread = new Thread(() =>
+                {
+                    RunUI();
+                });
+                uiThread.SetApartmentState(ApartmentState.STA);
+                uiThread.Start();
+
+                // Run Initialize on the main thread
+                Initialize().GetAwaiter().GetResult();
+            }
+        }
+        [STAThread]
+
+        private static void RunUI()
+        {
+            // Load the assembly
+            var assembly = Assembly.LoadFrom("WinForge.UI.Main.dll");
+
+            // Get the Form1 type
+            var formType = assembly.GetType("WinForge.UI.Main.MainForm");
+
+            // Create an instance of the form
+            MainForm = (Form?)Activator.CreateInstance(formType!);
+
+            // Start the WinForms message loop with the form
+            Application.EnableVisualStyles();
+            // Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(MainForm!);
+
+
         }
         private static async Task RunMainLoopAsync()
         {
             while (running)
             {
-                await Task.Delay(100); // Adjust delay as needed
-                                       // IPC.RegisterListener("WinForge.UI.Main", IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
-                                       // IPC.SendMessageAsync(new IPCMessage("WinForge.UI.Main", "WinForge.Base", "showForm", IPCMessageType.Command, new object[] { })).Wait();
-                                       //Logger.Log("Running main loop...", LogLevel.Debug, "WinForge.Base");
-                                       // You can add periodic checks or maintenance here if needed
+                await Task.Delay(100);
             }
         }
         private static void IPCMessageReceived(object? sender, IPCMessage e)

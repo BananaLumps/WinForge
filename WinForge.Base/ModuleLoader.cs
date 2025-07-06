@@ -34,7 +34,6 @@ namespace WinForge.Base
             Try:
                 try
                 {
-
                     Assembly assembly = Assembly.LoadFrom(dllPath);
 
                     var moduleTypes = assembly.GetTypes()
@@ -66,9 +65,7 @@ namespace WinForge.Base
                     var match = Regex.Match(ex.Message, @"'([^',]+),\s*Version=");
                     LoadFromExternalLibrary(match.Groups[1].Value + ".dll");
                     goto Try;
-
                 }
-
             }
             return modules;
         }

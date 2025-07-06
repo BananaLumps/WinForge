@@ -10,12 +10,17 @@ namespace WinForge.Common
         /// example: `dependencyService.Register<ILogger>(new Logger());`
         public void Register<T>(T instance) where T : class
         {
+            if (instance is null)
+                throw new ArgumentNullException(nameof(instance), "Cannot register a null dependency.");
+
             var type = typeof(T);
-            if (_services.ContainsKey(type))
-            {
-                return;
-            }
             _services[type] = instance;
+
+            // Also register by interface types if the instance implements any
+            foreach (var interfaceType in type.GetInterfaces())
+            {
+                _services.TryAdd(interfaceType, instance);
+            }
         }
 
         /// <inheritdoc />
@@ -23,11 +28,20 @@ namespace WinForge.Common
         {
             var type = typeof(T);
 
-            if (_services.TryGetValue(type, out var instance))
-                return (T)instance;
+            foreach (var key in _services.Keys)
+
+                if (_services.TryGetValue(type, out var instance))
+                    return (T)instance;
 
             var created = new T();
             _services[type] = created;
+
+            // Also register by interface types
+            foreach (var interfaceType in type.GetInterfaces())
+            {
+                _services.TryAdd(interfaceType, created);
+            }
+
             return created;
         }
 
@@ -36,10 +50,21 @@ namespace WinForge.Common
         {
             var type = typeof(T);
 
-            if (_services.TryGetValue(type, out var existing))
+            // Try direct lookup first
+            if (_services.TryGetValue(type, out var existing) && existing != null)
             {
                 instance = (T)existing;
                 return true;
+            }
+
+            // Fallback: search for assignable types
+            foreach (var kvp in _services)
+            {
+                if (type.IsAssignableFrom(kvp.Key))
+                {
+                    instance = (T)kvp.Value;
+                    return true;
+                }
             }
 
             instance = null;

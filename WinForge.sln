@@ -11,7 +11,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Base", "WinForge.B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.UI.Main", "WinForge.UI.Main\WinForge.UI.Main.csproj", "{AB9C0997-ABA9-DB2C-8331-66F7A4D4C511}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Core.UI", "WinForge.Core.UI\WinForge.Core.UI.csproj", "{EDE79317-70CA-43F7-8F76-B2C6BE8F22CF}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinForge.Core", "WinForge.Core\WinForge.Core.csproj", "{DD5DEB24-FE47-59FE-5D18-4C80F4562457}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +40,10 @@ Global
 		{AB9C0997-ABA9-DB2C-8331-66F7A4D4C511}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AB9C0997-ABA9-DB2C-8331-66F7A4D4C511}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AB9C0997-ABA9-DB2C-8331-66F7A4D4C511}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EDE79317-70CA-43F7-8F76-B2C6BE8F22CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EDE79317-70CA-43F7-8F76-B2C6BE8F22CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EDE79317-70CA-43F7-8F76-B2C6BE8F22CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EDE79317-70CA-43F7-8F76-B2C6BE8F22CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD5DEB24-FE47-59FE-5D18-4C80F4562457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD5DEB24-FE47-59FE-5D18-4C80F4562457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD5DEB24-FE47-59FE-5D18-4C80F4562457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD5DEB24-FE47-59FE-5D18-4C80F4562457}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

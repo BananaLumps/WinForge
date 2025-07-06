@@ -9,6 +9,8 @@ namespace WinForge.Settings
         public static string LogFilePath { get; set; } = "./logs/app.log";
         public static int MaxLogFiles { get; set; } = 10;
         public static int IPCResponseTimeout { get; set; } = 30000; // in milliseconds
+        public static bool StartMinimized { get; set; } = false;
+        public static bool StartWithWindows { get; set; } = false;
 
         public static Dictionary<string, object> CustomSettings { get; set; } = new();
         public static object? GetSetting(string key)

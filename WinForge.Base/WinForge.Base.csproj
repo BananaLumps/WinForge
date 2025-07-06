@@ -6,7 +6,7 @@
 		<FileVersion>0.0.1</FileVersion>
 		<InformationalVersion>0.0.1</InformationalVersion>
 		<OutputType>Exe</OutputType>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net8.0-windows</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
@@ -21,7 +21,20 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WinForge.Common\WinForge.Common.csproj" />
+    <ProjectReference Include="..\WinForge.UI.Main\WinForge.UI.Main.csproj" />
     <ProjectReference Include="..\WinForge.Updater\WinForge.Updater.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms">
+      <HintPath>..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Community\dotnet\net8.0\runtime\shared\Microsoft.WindowsDesktop.App\8.0.17\System.Windows.Forms.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Icon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 	<PropertyGroup>
 		<StartupObject>WinForge.Base.Base</StartupObject>
