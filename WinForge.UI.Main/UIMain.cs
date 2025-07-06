@@ -5,7 +5,8 @@ namespace WinForge.UI.Main
 {
     public class UIMain
     {
-        ICommunication Communication = new IPC.Client();
+        public static ICommunication Communication = new IPC.Client();
+        public DependencyService DependencyService { get; private set; } = new DependencyService();
         Logger? Logger = null;
         public void Initialize(DependencyService dependencyService)
         {
@@ -13,9 +14,8 @@ namespace WinForge.UI.Main
             Logger = dependencyService.GetDependency<Logger>();
             Communication.PipeName = "WinForge.UI.Main";
             Communication.RegisterListener("WinForge.UI.Main", IPCMessageReceived, IPCResponseReceived, IPCCommandReceived);
-            Logger?.Log($"Initializing module WinForge.UI.Main...", LogLevel.Info);
+            Logger.Log($"Initializing module WinForge.UI.Main...", LogLevel.Info, "WinForge.UI.Main");
         }
-
         private void IPCCommandReceived(object? sender, IPCMessage e)
         {
             string lowerMessage = e.Message.ToLowerInvariant();
@@ -42,6 +42,13 @@ namespace WinForge.UI.Main
         {
             form.Show();
 
+        }
+        public UIMain()
+        {
+        }
+        public UIMain(DependencyService dependencyService)
+        {
+            Initialize(dependencyService);
         }
     }
 }
