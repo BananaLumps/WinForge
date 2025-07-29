@@ -58,6 +58,13 @@ namespace WinForge.UI.Main
         {
             UIMainInstance = new UIMain(dependencyService);
         }
+
+        private void notifyIcon_DoubleClick(object sender, EventArgs e)
+        {
+            this.Show();
+            this.WindowState = FormWindowState.Normal;
+            this.BringToFront();
+        }
         #region MenuStrip Items
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -68,6 +75,15 @@ namespace WinForge.UI.Main
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Stop();
+        }
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (Settings.Application.CloseToTray && e.CloseReason == CloseReason.UserClosing)
+            {
+                this.WindowState = FormWindowState.Minimized;
+                e.Cancel = true;
+            }
+            else Stop();
         }
         #endregion
     }

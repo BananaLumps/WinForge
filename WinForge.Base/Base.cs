@@ -25,6 +25,7 @@ namespace WinForge.Base
         {
             Settings.Persistence.LoadApplicationSettings();
             Settings.Persistence.LoadUserSettings();
+            Settings.Persistence.SaveApplicationSettings();
 
             ReplaceUpdater();
             //ToDo:Run Updater

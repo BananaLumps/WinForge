@@ -11,6 +11,7 @@ namespace WinForge.Settings
         public static int IPCResponseTimeout { get; set; } = 30000; // in milliseconds
         public static bool StartMinimized { get; set; } = false;
         public static bool StartWithWindows { get; set; } = false;
+        public static bool CloseToTray { get; set; } = false;
 
         public static Dictionary<string, object> CustomSettings { get; set; } = new();
         public static object? GetSetting(string key)
@@ -38,8 +39,20 @@ namespace WinForge.Settings
     }
     public static class Persistence
     {
-        private const string ApplicationSettingsFile = "ApplicationSettings.json";
-        private const string UserSettingsFile = "UserSettings.json";
+        private static readonly string AppDataDirectory = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            "WinForge", "Config"
+        );
+
+        private static readonly string ApplicationSettingsFile = Path.Combine(AppDataDirectory, "ApplicationSettings.json");
+        private static readonly string UserSettingsFile = Path.Combine(AppDataDirectory, "UserSettings.json");
+
+        static Persistence()
+        {
+            // Ensure the AppData folder exists
+            if (!Directory.Exists(AppDataDirectory))
+                Directory.CreateDirectory(AppDataDirectory);
+        }
 
         /// <summary> Saves the application settings to a JSON file. </summary>
         public static bool SaveApplicationSettings()
@@ -78,11 +91,9 @@ namespace WinForge.Settings
                     if (!dict.TryGetValue(prop.Name, out var jsonValue))
                         continue;
 
-                    object? value = null;
-
                     try
                     {
-                        value = JsonSerializer.Deserialize(jsonValue.GetRawText(), prop.PropertyType);
+                        var value = JsonSerializer.Deserialize(jsonValue.GetRawText(), prop.PropertyType);
                         prop.SetValue(null, value);
                     }
                     catch
@@ -105,13 +116,11 @@ namespace WinForge.Settings
         {
             try
             {
-                var dict = typeof(User)                                   // <- static user container
+                var dict = typeof(User)
                     .GetProperties(BindingFlags.Public | BindingFlags.Static)
                     .ToDictionary(p => p.Name, p => p.GetValue(null));
 
-                var json = JsonSerializer.Serialize(dict,
-                              new JsonSerializerOptions { WriteIndented = true });
-
+                var json = JsonSerializer.Serialize(dict, new JsonSerializerOptions { WriteIndented = true });
                 File.WriteAllText(UserSettingsFile, json);
                 return true;
             }
@@ -122,7 +131,7 @@ namespace WinForge.Settings
             }
         }
 
-        /// <summary> Loads the user settings from a JSON file. </summary>s
+        /// <summary> Loads the user settings from a JSON file. </summary>
         public static bool LoadUserSettings()
         {
             try
@@ -141,13 +150,12 @@ namespace WinForge.Settings
 
                     try
                     {
-                        var value = JsonSerializer.Deserialize(jsonValue.GetRawText(),
-                                                                prop.PropertyType);
+                        var value = JsonSerializer.Deserialize(jsonValue.GetRawText(), prop.PropertyType);
                         prop.SetValue(null, value);
                     }
                     catch
                     {
-                        // Ignore incompatible or malformed values
+                        // Ignore invalid or malformed values
                     }
                 }
 
